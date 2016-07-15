@@ -89,6 +89,7 @@ class Migration(migrations.Migration):
                 ('traceback', models.TextField(null=True, verbose_name='traceback', blank=True)),
                 ('hidden', models.BooleanField(default=False, db_index=True, editable=False)),
                 ('meta', djcelery.picklefield.PickledObjectField(default=None, null=True, editable=False)),
+                ('extra', djcelery.picklefield.PickledObjectField(default=None, null=True, editable=False)),
             ],
             options={
                 'db_table': 'celery_taskmeta',
