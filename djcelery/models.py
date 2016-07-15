@@ -43,6 +43,9 @@ class TaskMeta(models.Model):
     meta = PickledObjectField(
         compress=True, null=True, default=None, editable=False,
     )
+    extra = PickledObjectField(
+        null=True, default=None, editable=False,
+    )
 
     objects = managers.TaskManager()
 
