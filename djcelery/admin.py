@@ -21,7 +21,7 @@ from celery.utils.text import abbrtask
 
 from .admin_utils import action, display_field, fixedwidth
 from .models import (
-    TaskState, WorkerState,
+    TaskState, WorkerState, TaskMeta,
     PeriodicTask, IntervalSchedule, CrontabSchedule,
 )
 from .humanize import naturaldate
@@ -353,3 +353,8 @@ class PeriodicTaskAdmin(admin.ModelAdmin):
 admin.site.register(IntervalSchedule)
 admin.site.register(CrontabSchedule)
 admin.site.register(PeriodicTask, PeriodicTaskAdmin)
+
+
+@admin.register(TaskMeta)
+class TaskMetaAdmin(admin.ModelAdmin):
+    pass
