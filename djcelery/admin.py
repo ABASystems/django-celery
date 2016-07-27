@@ -357,4 +357,5 @@ admin.site.register(PeriodicTask, PeriodicTaskAdmin)
 
 @admin.register(TaskMeta)
 class TaskMetaAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('__str__', 'meta', 'extra')
+    list_filter = ('status', 'name', 'date_done')

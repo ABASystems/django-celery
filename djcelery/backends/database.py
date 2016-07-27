@@ -1,6 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from celery import current_app
+from celery.app import current_task
 from celery.backends.base import BaseDictBackend
 from celery.utils.timeutils import maybe_timedelta
 
@@ -22,11 +23,14 @@ class DatabaseBackend(BaseDictBackend):
     subpolling_interval = 0.5
 
     def _store_result(self, task_id, result, status,
-                      traceback=None, request=None):
+                      traceback=None, request=None,
+                      body=None):
         """Store return value and status of an executed task."""
         self.TaskModel._default_manager.store_result(
             task_id, result, status,
+            name=getattr(request, 'name', request.task),
             traceback=traceback, children=self.current_task_children(request),
+            body=body
         )
         return result
 

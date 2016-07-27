@@ -18,7 +18,7 @@ from .picklefield import PickledObjectField
 from .utils import fromtimestamp, now
 from .compat import python_2_unicode_compatible
 
-ALL_STATES = sorted(states.ALL_STATES)
+ALL_STATES = sorted(list(states.ALL_STATES) + ['LOST'])
 TASK_STATE_CHOICES = sorted(zip(ALL_STATES, ALL_STATES))
 
 
@@ -28,13 +28,16 @@ def cronexp(field):
 
 @python_2_unicode_compatible
 class TaskMeta(models.Model):
-    """Task result/status."""
+    """Task result/status.
+    """
+    name = models.CharField(max_length=255, blank=True, default='')
     task_id = models.CharField(_('task id'), max_length=255, unique=True)
     status = models.CharField(
         _('state'),
         max_length=50, default=states.PENDING, choices=TASK_STATE_CHOICES,
     )
     result = PickledObjectField(null=True, default=None, editable=False)
+    date_added = models.DateTimeField(auto_now_add=True)
     date_done = models.DateTimeField(_('done at'), auto_now=True)
     traceback = models.TextField(_('traceback'), blank=True, null=True)
     hidden = models.BooleanField(editable=False, default=False, db_index=True)
@@ -63,7 +66,8 @@ class TaskMeta(models.Model):
                 'children': (self.meta or {}).get('children')}
 
     def __str__(self):
-        return '<Task: {0.task_id} state={0.status}>'.format(self)
+        name = (' ' + self.name) if self.name else ''
+        return '<Task:{1} {0.task_id} state={0.status}>'.format(self, name)
 
 
 @python_2_unicode_compatible

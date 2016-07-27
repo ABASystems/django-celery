@@ -150,7 +150,8 @@ class TaskManager(ResultManager):
 
     @transaction_retry(max_retries=2)
     def store_result(self, task_id, result, status,
-                     traceback=None, children=None):
+                     name='', traceback=None, children=None,
+                     body=None):
         """Store the result and status of a task.
 
         :param task_id: task id
@@ -174,11 +175,24 @@ class TaskManager(ResultManager):
             create the same task. The default is to retry twice.
 
         """
-        return self.update_or_create(task_id=task_id,
-                                     defaults={'status': status,
-                                               'result': result,
-                                               'traceback': traceback,
-                                               'meta': {'children': children}})
+        try:
+            inst = get_queryset(self).get(task_id=task_id)
+        except self.model.DoesNotExist:
+            inst = None
+        defaults = {
+            'status': status,
+            'result': result,
+            'traceback': traceback,
+            'name': name,
+            'meta': {
+                'children': children,
+            }
+        }
+        if body is not None:
+            defaults['meta']['body'] = body
+        elif inst:
+            defaults['meta']['body'] = inst.meta.get('body', None)
+        return self.update_or_create(task_id=task_id, defaults=defaults)
 
     def warn_if_repeatable_read(self):
         if 'mysql' in self.current_engine().lower():

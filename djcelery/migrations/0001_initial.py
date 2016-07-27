@@ -82,9 +82,11 @@ class Migration(migrations.Migration):
             name='TaskMeta',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=255, blank=True, default='')),
                 ('task_id', models.CharField(unique=True, max_length=255, verbose_name='task id')),
                 ('status', models.CharField(default='PENDING', max_length=50, verbose_name='state', choices=[('FAILURE', 'FAILURE'), ('PENDING', 'PENDING'), ('RECEIVED', 'RECEIVED'), ('RETRY', 'RETRY'), ('REVOKED', 'REVOKED'), ('STARTED', 'STARTED'), ('SUCCESS', 'SUCCESS')])),
                 ('result', djcelery.picklefield.PickledObjectField(default=None, null=True, editable=False)),
+                ('date_added', models.DateTimeField(auto_now_add=True)),
                 ('date_done', models.DateTimeField(auto_now=True, verbose_name='done at')),
                 ('traceback', models.TextField(null=True, verbose_name='traceback', blank=True)),
                 ('hidden', models.BooleanField(default=False, db_index=True, editable=False)),

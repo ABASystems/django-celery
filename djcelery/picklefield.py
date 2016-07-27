@@ -116,6 +116,7 @@ class PickledObjectField(BaseField):
                 'Lookup type {0} is not supported.'.format(lookup_type))
         return super(PickledObjectField, self) \
             .get_db_prep_lookup(*args, **kwargs)
+        
 
 try:
     from south.modelsinspector import add_introspection_rules
