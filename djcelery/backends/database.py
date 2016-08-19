@@ -4,7 +4,6 @@ from celery import current_app
 from celery.app import current_task
 from celery.backends.base import BaseDictBackend
 from celery.utils.timeutils import maybe_timedelta
-from django.db import transaction
 
 from ..models import TaskMeta, TaskSetMeta
 
@@ -27,15 +26,12 @@ class DatabaseBackend(BaseDictBackend):
                       traceback=None, request=None,
                       body=None):
         """Store return value and status of an executed task."""
-        transaction.set_autocommit(False)
         self.TaskModel._default_manager.store_result(
             task_id, result, status,
             name=getattr(request, 'name', request.task),
             traceback=traceback, children=self.current_task_children(request),
             body=body
         )
-        transaction.commit()
-        transaction.set_autocommit(True)
         return result
 
     def _save_group(self, group_id, result):
