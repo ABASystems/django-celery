@@ -190,7 +190,7 @@ class TaskManager(ResultManager):
         }
         if body is not None:
             defaults['meta']['body'] = body
-        elif inst:
+        elif inst and inst.meta is not None:
             defaults['meta']['body'] = inst.meta.get('body', None)
         return self.update_or_create(task_id=task_id, defaults=defaults)
 
